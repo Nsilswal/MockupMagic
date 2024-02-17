@@ -10,7 +10,7 @@ import re
 import requests
 import base64
 
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = "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"
 
 OpenAI.api_key = os.environ["OPENAI_API_KEY"]
 
