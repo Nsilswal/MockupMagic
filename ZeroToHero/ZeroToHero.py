@@ -8,13 +8,17 @@ color = "rgb(107,99,246)"
 
 def qa(desc: str, code: str) -> rx.Component:
     return rx.hstack(
-        rx.box(
-            rx.text(desc, text_align="left"),
-            style=style.question_style,
+        rx.text_area(
+        value=code,
+        # on_change=State.set_code(),
+        style=style.question_style,
         ),
+        # rx.box(
+        #     rx.text(code, text_align="left"),
+        #     # style=style.answer_style
+        # ),
         rx.box(
-            rx.html(code),
-            style=style.answer_style,
+            rx.html(code)
         ),
         # rx.box(
         #     rx.text(answer, text_align="left"),
@@ -24,30 +28,29 @@ def qa(desc: str, code: str) -> rx.Component:
     )
 
 
+# def chat() -> rx.Component:
+#     return rx.box(
+#         rx.foreach(
+#             State.chat_history,
+#             lambda messages: qa(messages[0], messages[1]),
+#         )
+#     )
 
-def chat() -> rx.Component:
-    return rx.box(
-        rx.foreach(
-            State.chat_history,
-            lambda messages: qa(messages[0], messages[1]),
-        )
-    )
 
-
-def action_bar() -> rx.Component:
-    return rx.hstack(
-        rx.chakra.input(
-            value=State.question,
-            placeholder="Ask a question",
-            on_change=State.set_question,
-            style=style.input_style,
-        ),
-        rx.button(
-            "Ask",
-            on_click=State.answer,
-            style=style.button_style,
-        ),
-    )
+# def action_bar() -> rx.Component:
+#     return rx.hstack(
+#         rx.chakra.input(
+#             value=State.question,
+#             placeholder="Ask a question",
+#             on_change=State.set_question,
+#             style=style.input_style,
+#         ),
+#         rx.button(
+#             "Ask",
+#             on_click=State.answer,
+#             style=style.button_style,
+#         ),
+#     )
 
 def upload_image() -> rx.Component:
     return rx.center(
@@ -71,7 +74,7 @@ def upload_image() -> rx.Component:
     )
 
 def generate_wireframe() -> rx.Component:
-    return rx.center(rx.hstack(
+    return rx.box(rx.hstack(
             rx.button(
                 "Generate Wireframe!",
                 on_click=State.generateWireFrame(),
@@ -84,8 +87,9 @@ def index() -> rx.Component:
     return rx.container(
         rx.center(upload_image()),
         generate_wireframe(),
-        chat(),
-        action_bar(),
+        qa(State.code,State.code)
+        # chat()
+        # action_bar(),
     )
 
 

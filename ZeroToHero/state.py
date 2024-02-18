@@ -1,4 +1,3 @@
-# state.py
 import reflex as rx
 import asyncio
 from openai import OpenAI
@@ -10,9 +9,11 @@ import re
 import requests
 import base64
 
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = "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"
 
 OpenAI.api_key = os.environ["OPENAI_API_KEY"]
+
+
 
 def encode_image(img):
     return base64.b64encode(img).decode('utf-8')
@@ -54,6 +55,8 @@ class State(rx.State):
 
     # The images to show.
     img: list[str]
+
+    code: str
 
     async def handle_upload(self, files: list[rx.UploadFile]):
         """Handle the upload of file(s).
@@ -110,51 +113,61 @@ class State(rx.State):
     def generateWireFrame(self):
         # Our chatbot has some brains now!
 
+        print("thinking right now")
+        
+
+        if not self.img:
+            print("No image uploaded.")
+            return
+
         image_path = rx.get_asset_path(self.img[0])
 
         # Read the image data
         with open(image_path, "rb") as f:
             image_data = f.read()
 
-    # Encode the image
+        # Encode the image
         encoded_image = encode_image(image_data)
-        print("hello nirvan I'm thinking right now ")
 
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {OpenAI.api_key}"
-            }
+        }
 
         payload = {
             "model": "gpt-4-vision-preview",
             "messages": [
                 {
-                "role": "user",
-                "content": [
-                    {
-                    "type": "text",
-                    "text": "Could you please transform this hand-drawn wireframe into a working HTML/CSS/JS mockup? I'd like the code to reflect the layout, details, and features as closely as possible to what's depicted, with placeholders for images and text. The mockup should include features just as shown in the drawing. For example, the shapes, size, and placements of the placeholders should roughly be the same as the boxes drawn. Additionally, I'd like interactive elements. Please put all of the code into 1 html file."
-                    },
-                    {
-                    "type": "image_url",
-                    "image_url": {
-                        "url": f"data:image/jpeg;base64,{encoded_image}"
-                    }
-                    }
-                ]
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Could you please transform this hand-drawn wireframe into a working HTML/CSS/JS code? I'd like the code to reflect the layout, details, and features as closely as possible to what's depicted, with placeholders for images and text all while using color. For reference, the largest rectangle(s) are outlines of the computer screen. The mockup should include features just as shown in the drawing. For example, the shapes, size, and placements of the placeholders should roughly be the same as the boxes drawn. If there are arrows in the drawing, follow them to see what buttons should link to what pages. If there are separate screens in the drawing, separate them into separate sections of the website. Outline boxes if they require user input. Try to make the website as aesthetic as possible while still following the hand-drawn requests. Additionally, I'd like interactive elements. Everything needs to be in one file this is a must!"
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:image/jpeg;base64,{encoded_image}",
+                                "detail":"high"
+                            }
+                        }
+                    ]
                 }
             ],
             "max_tokens": 3000
-            }
+        }
 
         response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
 
         response_json = response.json()
 
+
         ret = response_json['choices'][0]['message']['content']
 
         code, text = separate_code_and_text(ret)
 
+        self.code = code
+
+        print(code)
+
         self.chat_history.append((text, code))
-
-
