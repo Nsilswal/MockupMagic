@@ -10,7 +10,7 @@ import re
 import requests
 import base64
 
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = "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"
 
 OpenAI.api_key = os.environ["OPENAI_API_KEY"]
 
@@ -147,14 +147,13 @@ class State(rx.State):
                             The mockup should include features just as shown in the drawing. \
                             For example, the shapes, size, and placements of the placeholders should roughly be the same as the boxes drawn. \
                             If there are arrows in the drawing, follow them to see what buttons should link to what pages. \
-                            If there are separate screens in the drawing, separate them into separate sections of the website: \
-                            each large box in the drawing should correspond to a different screen when you click on the word in the navigation bar for that screen. \
+                            If there are separate screens in the drawing, separate them into separate sections of the website. \
                             Not all of the different sections should be on one page. Try to make the website as aesthetic as possible while still following the hand-drawn requests. \
-                            If the drawing has elements in a horizontal stack aligned, keep them that way, and same with vertical. \
+                            If the drawing has elements in a horizontal stack aligned, keep them that way, and same with vertical. Regardless, properly align everything. \
                             Additionally, I'd like interactive elements. Please put all of the code into 1 html file. \
                             Add any JS code need to ensure that the mockup code created will still be interactive even if placed in a different environment without explicit links. \
                             Add ghost text to any user input box. \
-                            Remove the html word that is returned at the top."},
+                            Remove anything in the HTML file before the first carrot character < "},
                         #     Add code like this to ensure the generated mockup is still interactive: \
                         #     <script> \
                         #     document.addEventListener(DOMContentLoaded, function() { \

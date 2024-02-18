@@ -16,12 +16,27 @@ class TextAreaControlled(rx.State):
 
 
 def qa(desc: str, code: str) -> rx.Component:
+    # if not code:  # If no code, don't display the sections
+    #     return rx.empty()
+    # rx.cond(~code, rx.epmty(), rx.hstack(
+    #     rx.text_area(
+    #         value = State.code,
+    #         on_change = State.update_code(TextAreaControlled.text),
+    #         on_focus = TextAreaControlled.set_text,
+    #         style=style.code_container_style,
+    #     ),
+    #     rx.box(
+    #         rx.html(State.code),
+    #         style={"width": "70vw", "height": "100vh"}
+    #     ),
+    #     margin_y="1em",
+    # ))
     return rx.hstack(
         rx.text_area(
             value = State.code,
             on_change = State.update_code(TextAreaControlled.text),
             on_focus = TextAreaControlled.set_text,
-            style={"width": "30vw", "height": "100vh"}
+            style=style.code_container_style,
         ),
         rx.box(
             rx.html(State.code),
@@ -29,7 +44,6 @@ def qa(desc: str, code: str) -> rx.Component:
         ),
         margin_y="1em",
     )
-
 
 
 # def chat() -> rx.Component:
@@ -91,6 +105,7 @@ def generate_wireframe() -> rx.Component:
                 on_click=State.generateWireFrame(),
                 style={"background-color": "black", "color": "white"}
             ),
+            rx.spacer(height="2em")
         )
     )
 
@@ -106,9 +121,15 @@ def navigation_bar() -> rx.Component:
         style=style.nav_bar_style,
     )
 
+def code_block(code: str) -> rx.Component:
+    return rx.box(
+        rx.text(code),
+        style=style.code_container_style,
+    )
+
 def company_name() -> rx.Component:
     return rx.box(
-        "Zero to Hero",
+        "MockupMagic",
         style={
             "font_size": "2em",  # Adjust font size as needed
             "font_weight": "bold",  # Make the font bold
@@ -154,21 +175,15 @@ def discussion_forum() -> rx.Component:
         rx.spacer(height="2em"),
 
         # Display discussion topics
-        rx.heading("Discussion Topics"),
-        rx.container(
-            # Each topic can be a link to view the details
-            rx.link("Topic 1", href="/discussion_forum/topic1"),
-            rx.link("Topic 2", href="/discussion_forum/topic2"),
-            # Add more topics as needed
-        ),
+        rx.heading("Aarzu's Customizable Flowers Prototype"),
+        rx.image(src="/flowers_prototype.png"),
         rx.spacer(height="2em"),
 
         # User comments section
         rx.heading("User Comments"),
         rx.container(
             # Display user comments
-            rx.text("User 1: This is a comment."),
-            rx.text("User 2: Another comment here."),
+            rx.text("Nirvan: This seems so cool! Is there a way to just input a photo of a bouquet I like and have the florist create that?"),
             # Add more comments as needed
         ),
         rx.spacer(height="2em"),
@@ -178,8 +193,11 @@ def discussion_forum() -> rx.Component:
         rx.container(
             rx.chakra.input(placeholder="Your Name", style={"margin-bottom": "1em"}),
             rx.chakra.text_area(placeholder="Your Comment", style={"margin-bottom": "1em"}),
-            rx.button("Post Comment", style={"background-color": color, "color": "white"})
-        )
+            rx.button("Post Comment", style={"background-color": "black", "color": "white"})
+        ),
+        rx.spacer(height="2em"),
+        rx.button("Get feedback on your prototype", style={"background-color": color, "color": "white"}),
+        rx.spacer(height="5em")
     )
 
 @rx.page()
@@ -194,7 +212,7 @@ def index() -> rx.Component:
         generate_wireframe(),
         qa(State.code,State.code),
         # chat(),
-        rx.spacer(height="5em")
+        rx.spacer(height="10em")
         # action_bar()
     )
 

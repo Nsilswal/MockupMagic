@@ -43,3 +43,18 @@ nav_bar_style = dict(
     align_items="center",
 )
 
+code_container_style = {
+    "background": "#f5f5f5",  # Light grey background
+    "border": "1px solid #ddd",  # Light grey border
+    "border_radius": "5px",
+    "padding": "20px",
+    "margin": "20px",
+    "font_family": "'Courier New', Courier, monospace",
+    "font_size": "0.85em",
+    "overflow": "auto",  # Enable scrolling for overflow
+    "white_space": "pre",  # Preserve whitespace and line breaks
+    "width": "500px",  # Subtract padding from 100% width
+    "height": "600px",  # Fixed height for the code block
+    "box_shadow": "0 4px 8px rgba(0,0,0,0.1)"  # Soft shadow for depth
+}
+
