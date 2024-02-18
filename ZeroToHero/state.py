@@ -10,7 +10,7 @@ import re
 import requests
 import base64
 
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = "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"
 
 OpenAI.api_key = os.environ["OPENAI_API_KEY"]
 
@@ -133,7 +133,7 @@ class State(rx.State):
                 "content": [
                     {
                     "type": "text",
-                    "text": "Could you please transform this hand-drawn wireframe into a working HTML/CSS/JS mockup? I'd like the code to reflect the layout, details, and features as closely as possible to what's depicted, with placeholders for images and text. The mockup should include features just as shown in the drawing. For example, the shapes, size, and placements of the placeholders should roughly be the same as the boxes drawn. Additionally, I'd like interactive elements. Please put all of the code into 1 html file."
+                    "text": "Could you please transform this hand-drawn wireframe into a working HTML/CSS/JS mockup? I'd like the code to reflect the layout, details, and features as closely as possible to what's depicted, with placeholders for images and text. For reference, the largest rectangle(s) are outlines of the computer screen. The mockup should include features just as shown in the drawing. For example, the shapes, size, and placements of the placeholders should roughly be the same as the boxes drawn. If there are arrows in the drawing, follow them to see what buttons should link to what pages. If there are separate screens in the drawing, separate them into separate sections of the website: each large box in the drawing should correspond to a different screen when you click on the word in the navigation bar for that screen. Not all of the different sections should be on one page. Try to make the website as aesthetic as possible while still following the hand-drawn requests. Additionally, I'd like interactive elements. Please put all of the code into 1 html file."
                     },
                     {
                     "type": "image_url",
@@ -150,6 +150,8 @@ class State(rx.State):
         response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
 
         response_json = response.json()
+
+        print(response_json)
 
         ret = response_json['choices'][0]['message']['content']
 

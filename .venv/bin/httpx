@@ -1,6 +1,4 @@
-#!/bin/sh
-'''exec' "/Users/nirvan/Documents/6.Personal Projects/ZeroToHero/.venv/bin/python3" "$0" "$@"
-' '''
+#!/Users/aarzugupta/Desktop/TreeHacks/ZeroToHero/.venv/bin/python3.10
 # -*- coding: utf-8 -*-
 import re
 import sys

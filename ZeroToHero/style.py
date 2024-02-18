@@ -29,3 +29,17 @@ button_style = dict(
     color="black", padding="1em", margin_left="1em",
 )
 
+nav_link_style = dict(
+    color="#333",  # Adjust color as needed
+    text_decoration="none",
+    margin_right="1em",
+)
+
+nav_bar_style = dict(
+    background_color="#f0f0f0",  # Adjust background color as needed
+    padding="1em",
+    box_shadow="0px 2px 4px rgba(0, 0, 0, 0.1)",  # Adjust shadow as needed
+    display="flex",
+    align_items="center",
+)
+
