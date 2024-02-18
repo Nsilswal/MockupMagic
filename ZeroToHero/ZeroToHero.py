@@ -2,28 +2,30 @@
 import reflex as rx
 
 from ZeroToHero import style
-from ZeroToHero.state import State
+from ZeroToHero.state import *
 
 color = "rgb(107,99,246)"
+
+
+class TextAreaControlled(rx.State):
+    text: str
+
+    def getText(self):
+        print(self.text)
+        return self.text
 
 def qa(desc: str, code: str) -> rx.Component:
     return rx.hstack(
         rx.text_area(
-        value=code,
-        # on_change=State.set_code(),
-        style=style.question_style,
+        value=State.code,
+        on_change=State.update_code(TextAreaControlled.text),
+        on_focus= TextAreaControlled.set_text,
+        style={"width": "30vw", "height": "100vh"},
         ),
-        # rx.box(
-        #     rx.text(code, text_align="left"),
-        #     # style=style.answer_style
-        # ),
         rx.box(
-            rx.html(code)
+            rx.html(State.code),
+            style={"width": "70vw", "height": "100vh", "border_color":"black"},
         ),
-        # rx.box(
-        #     rx.text(answer, text_align="left"),
-        #     style=style.answer_style,
-        # ),
         margin_y="1em",
     )
 
@@ -84,7 +86,7 @@ def generate_wireframe() -> rx.Component:
     )
 
 def index() -> rx.Component:
-    return rx.container(
+    return rx.box(
         rx.center(upload_image()),
         generate_wireframe(),
         qa(State.code,State.code)

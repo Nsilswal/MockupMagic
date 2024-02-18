@@ -9,7 +9,7 @@ import re
 import requests
 import base64
 
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = "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"
 
 OpenAI.api_key = os.environ["OPENAI_API_KEY"]
 
@@ -56,7 +56,19 @@ class State(rx.State):
     # The images to show.
     img: list[str]
 
-    code: str
+    code: str = ""
+
+
+    # code: str
+
+    async def update_code(self, newCode: str):
+        print()
+        print("updateding code to ")
+        print(newCode)
+        self.code = newCode
+        print()
+        print('now it is ')
+        print(self.code)
 
     async def handle_upload(self, files: list[rx.UploadFile]):
         """Handle the upload of file(s).
@@ -142,7 +154,7 @@ class State(rx.State):
                     "content": [
                         {
                             "type": "text",
-                            "text": "Could you please transform this hand-drawn wireframe into a working HTML/CSS/JS code? I'd like the code to reflect the layout, details, and features as closely as possible to what's depicted, with placeholders for images and text all while using color. For reference, the largest rectangle(s) are outlines of the computer screen. The mockup should include features just as shown in the drawing. For example, the shapes, size, and placements of the placeholders should roughly be the same as the boxes drawn. If there are arrows in the drawing, follow them to see what buttons should link to what pages. If there are separate screens in the drawing, separate them into separate sections of the website. Outline boxes if they require user input. Try to make the website as aesthetic as possible while still following the hand-drawn requests. Additionally, I'd like interactive elements. Everything needs to be in one file this is a must!"
+                            "text": "Could you please transform this hand-drawn wireframe into a working HTML mockup? I'd like the code to reflect the layout, details, and features as closely as possible to what's depicted, with placeholders for images and text. For reference, the largest rectangle(s) are outlines of the computer screen. The mockup should include features just as shown in the drawing. For example, the shapes, size, and placements of the placeholders should roughly be the same as the boxes drawn. If there are arrows in the drawing, follow them to see what buttons should link to what pages. If there are separate screens in the drawing, separate them into separate sections of the website: each large box in the drawing should correspond to a different screen when you click on the word in the navigation bar for that screen. Not all of the different sections should be on one page. Try to make the website as aesthetic as possible while still following the hand-drawn requests. Additionally, I'd like interactive elements. Please put all of the code into 1 html file."
                         },
                         {
                             "type": "image_url",
@@ -161,6 +173,7 @@ class State(rx.State):
 
         response_json = response.json()
 
+        print(response_json)
 
         ret = response_json['choices'][0]['message']['content']
 
@@ -168,6 +181,6 @@ class State(rx.State):
 
         self.code = code
 
-        print(code)
+        print("Finished thinking")
 
         self.chat_history.append((text, code))
