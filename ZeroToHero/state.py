@@ -10,7 +10,7 @@ import re
 import requests
 import base64
 
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = "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"
 
 OpenAI.api_key = os.environ["OPENAI_API_KEY"]
 
@@ -190,7 +190,9 @@ class State(rx.State):
 
         code, text = separate_code_and_text(ret)
 
+        #print(code)
         self.code = code
+        #print(self.code)
 
         self.chat_history.append((text, code))
 
