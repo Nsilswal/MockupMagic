@@ -6,32 +6,39 @@ from ZeroToHero.state import State
 
 color = "rgb(107,99,246)"
 
+class TextAreaControlled(rx.State):
+    text:str
+
+    def getText(self):
+        print(self.text)
+        return self.text
+
+
+
 def qa(desc: str, code: str) -> rx.Component:
     return rx.hstack(
-        # rx.box(
-        #     rx.text(desc, text_align="left"),
-        #     style=style.question_style,
-        # ),
-        rx.box(
-            rx.html(code),
-            style={"width": "100vw", "height": "100vh", "overflow": "auto"}
+        rx.text_area(
+            value = State.code,
+            on_change = State.update_code(TextAreaControlled.text),
+            on_focus = TextAreaControlled.set_text,
+            style={"width": "30vw", "height": "100vh"}
         ),
-        # rx.box(
-        #     rx.text(answer, text_align="left"),
-        #     style=style.answer_style,
-        # ),
+        rx.box(
+            rx.html(State.code),
+            style={"width": "70vw", "height": "100vh"}
+        ),
         margin_y="1em",
     )
 
 
 
-def chat() -> rx.Component:
-    return rx.box(
-        rx.foreach(
-            State.chat_history,
-            lambda messages: qa(messages[0], messages[1]),
-        )
-    )
+# def chat() -> rx.Component:
+#     return rx.box(
+#         rx.foreach(
+#             State.chat_history,
+#             lambda messages: qa(messages[0], messages[1]),
+#         )
+#     )
 
 
 # def action_bar() -> rx.Component:
@@ -92,8 +99,8 @@ def navigation_bar() -> rx.Component:
         rx.hstack(
             rx.link("Home", href="/", style=style.nav_link_style),
             rx.spacer(),  # Add spacer to push links to the right
-            rx.link("Discussion", href="/discussion", style=style.nav_link_style),
-            rx.link("Contact", href="/contact", style=style.nav_link_style),
+            rx.link("Discussion", href="/discussion_forum", style=style.nav_link_style),
+            rx.link("Contact", href="/contact_page", style=style.nav_link_style),
             style={"width": "100%", "justify_content": "space-between"},
         ),
         style=style.nav_bar_style,
@@ -110,16 +117,74 @@ def company_name() -> rx.Component:
         },
     )
 
+@rx.page(route="/contact_page")
 def contact_page() -> rx.Component:
     return rx.container(
-        rx.heading("Contact Us"),
-        rx.paragraph("For inquiries, please email us at info@example.com or call us at +123456789."),
-        # You can include more contact information or a contact form here
+        rx.spacer(height="1em"),
+        company_name(),  # Include company name (optional)
+        navigation_bar(),  # Include navigation bar
+        rx.spacer(height="2em"),
+        rx.center(
+            rx.vstack(
+                # Our email section
+                rx.heading("Our Email"),
+                rx.text("You can reach us via email at info@example.com."),
+                rx.spacer(height="2em"),
+
+                # Directly send us a message section
+                rx.heading("Send Us a Message"),
+                rx.text("Use the form below to send us a message."),
+                rx.container(
+                    rx.chakra.input(placeholder="Your Name", style={"margin-bottom": "1em"}),
+                    rx.chakra.input(placeholder="Your Email", style={"margin-bottom": "1em"}),
+                    rx.chakra.text_area(placeholder="Your Message", style={"margin-bottom": "1em"}),
+                    rx.button("Send Message", style={"background-color": color, "color": "white"})
+                )
+            )
+        ),
+        style={"margin-left": "5%", "width": "90%"}
     )
 
-
-def index() -> rx.Component:
+@rx.page(route="/discussion_forum")
+def discussion_forum() -> rx.Component:
     return rx.container(
+        rx.spacer(height="1em"),
+        company_name(),  # Include company name (optional)
+        navigation_bar(),  # Include navigation bar
+        rx.spacer(height="2em"),
+
+        # Display discussion topics
+        rx.heading("Discussion Topics"),
+        rx.container(
+            # Each topic can be a link to view the details
+            rx.link("Topic 1", href="/discussion_forum/topic1"),
+            rx.link("Topic 2", href="/discussion_forum/topic2"),
+            # Add more topics as needed
+        ),
+        rx.spacer(height="2em"),
+
+        # User comments section
+        rx.heading("User Comments"),
+        rx.container(
+            # Display user comments
+            rx.text("User 1: This is a comment."),
+            rx.text("User 2: Another comment here."),
+            # Add more comments as needed
+        ),
+        rx.spacer(height="2em"),
+
+        # Form for posting new comments
+        rx.heading("Post a New Comment"),
+        rx.container(
+            rx.chakra.input(placeholder="Your Name", style={"margin-bottom": "1em"}),
+            rx.chakra.text_area(placeholder="Your Comment", style={"margin-bottom": "1em"}),
+            rx.button("Post Comment", style={"background-color": color, "color": "white"})
+        )
+    )
+
+@rx.page()
+def index() -> rx.Component:
+    return rx.box(
         rx.spacer(height="1em"),
         company_name(),
         navigation_bar(),
@@ -127,14 +192,16 @@ def index() -> rx.Component:
         rx.center(upload_image()),
         rx.spacer(height="1em"),
         generate_wireframe(),
-        chat(),
+        qa(State.code,State.code),
+        # chat(),
         rx.spacer(height="5em")
         # action_bar()
     )
 
 
 app = rx.App()
-app.add_page(index)
+# app.add_page(index())
+# app.add_page(app())
 
 
 # Define routes for different pages

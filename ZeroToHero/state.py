@@ -10,7 +10,7 @@ import re
 import requests
 import base64
 
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = "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"
 
 OpenAI.api_key = os.environ["OPENAI_API_KEY"]
 
@@ -55,6 +55,12 @@ class State(rx.State):
     # The images to show.
     img: list[str]
 
+    code: str = ""
+
+    async def update_code(self, newCode: str):
+        self.code = newCode
+
+
     async def handle_upload(self, files: list[rx.UploadFile]):
         """Handle the upload of file(s).
 
@@ -76,40 +82,42 @@ class State(rx.State):
         """Clear the list of images."""
         self.img = []
 
-    def answer(self):
-        # Our chatbot has some brains now!
-        client = OpenAI()
-        session = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "user", "content": self.question}
-            ],
-            stop=None,
-            temperature=0.7,
-            stream=True,
-        )
+    # def answer(self):
+    #     # Our chatbot has some brains now!
+    #     client = OpenAI()
+    #     session = client.chat.completions.create(
+    #         model="gpt-3.5-turbo",
+    #         messages=[
+    #             {"role": "user", "content": self.question}
+    #         ],
+    #         stop=None,
+    #         temperature=0.7,
+    #         stream=True,
+    #     )
 
-        # Add to the answer as the chatbot responds.
-        answer = ""
-        self.chat_history.append((self.question, answer))
+    #     # Add to the answer as the chatbot responds.
+    #     answer = ""
+    #     self.chat_history.append((self.question, answer))
 
-        # Clear the question input.
-        self.question = ""
-        # Yield here to clear the frontend input before continuing.
-        yield
+    #     # Clear the question input.
+    #     self.question = ""
+    #     # Yield here to clear the frontend input before continuing.
+    #     yield
 
-        for item in session:
-            if hasattr(item.choices[0].delta, "content"):
-                if item.choices[0].delta.content is None:
-                    # presence of 'None' indicates the end of the response
-                    break
-                answer += item.choices[0].delta.content
-                self.chat_history[-1] = (self.chat_history[-1][0], answer)
-                yield
+    #     for item in session:
+    #         if hasattr(item.choices[0].delta, "content"):
+    #             if item.choices[0].delta.content is None:
+    #                 # presence of 'None' indicates the end of the response
+    #                 break
+    #             answer += item.choices[0].delta.content
+    #             self.chat_history[-1] = (self.chat_history[-1][0], answer)
+    #             yield
 
     def generateWireFrame(self):
         # Our chatbot has some brains now!
 
+        print("Loading...")
+        
         image_path = rx.get_asset_path(self.img[0])
 
         # Read the image data
@@ -118,7 +126,7 @@ class State(rx.State):
 
     # Encode the image
         encoded_image = encode_image(image_data)
-        print("hello nirvan I'm thinking right now ")
+        print("digitizing your image...")
 
         headers = {
             "Content-Type": "application/json",
@@ -133,8 +141,34 @@ class State(rx.State):
                 "content": [
                     {
                     "type": "text",
-                    "text": "Could you please transform this hand-drawn wireframe into a working HTML/CSS/JS mockup? I'd like the code to reflect the layout, details, and features as closely as possible to what's depicted, with placeholders for images and text. For reference, the largest rectangle(s) are outlines of the computer screen. The mockup should include features just as shown in the drawing. For example, the shapes, size, and placements of the placeholders should roughly be the same as the boxes drawn. If there are arrows in the drawing, follow them to see what buttons should link to what pages. If there are separate screens in the drawing, separate them into separate sections of the website: each large box in the drawing should correspond to a different screen when you click on the word in the navigation bar for that screen. Not all of the different sections should be on one page. Try to make the website as aesthetic as possible while still following the hand-drawn requests. Additionally, I'd like interactive elements. Please put all of the code into 1 html file."
-                    },
+                    "text": "Could you please transform this hand-drawn wireframe into a working HTML/CSS/JS mockup? \
+                            I'd like the code to reflect the layout, details, and features as closely as possible to what's depicted, \
+                            with placeholders for images and text. For reference, the largest rectangle(s) are outlines of the computer screen. \
+                            The mockup should include features just as shown in the drawing. \
+                            For example, the shapes, size, and placements of the placeholders should roughly be the same as the boxes drawn. \
+                            If there are arrows in the drawing, follow them to see what buttons should link to what pages. \
+                            If there are separate screens in the drawing, separate them into separate sections of the website: \
+                            each large box in the drawing should correspond to a different screen when you click on the word in the navigation bar for that screen. \
+                            Not all of the different sections should be on one page. Try to make the website as aesthetic as possible while still following the hand-drawn requests. \
+                            If the drawing has elements in a horizontal stack aligned, keep them that way, and same with vertical. \
+                            Additionally, I'd like interactive elements. Please put all of the code into 1 html file. \
+                            Add any JS code need to ensure that the mockup code created will still be interactive even if placed in a different environment without explicit links. \
+                            Add ghost text to any user input box. \
+                            Remove the html word that is returned at the top."},
+                        #     Add code like this to ensure the generated mockup is still interactive: \
+                        #     <script> \
+                        #     document.addEventListener(DOMContentLoaded, function() { \
+                        #     var navLinks = document.querySelectorAll('.navbar a'); \
+                        #     navLinks.forEach(function(link) { \
+                        #         link.addEventListener('click', function(e) { \
+                        #             e.preventDefault(); // Prevent default link behavior \
+                        #             var sectionId = this.getAttribute('onclick').match(/'([^']+)'/)[1]; // Extract sectionId from the onclick attribute \
+                        #             showSection(sectionId); // Use the existing showSection function \
+                        #         }); \
+                        #     }); \
+                        # });\
+                        # </script>\
+                        # </body>"
                     {
                     "type": "image_url",
                     "image_url": {
@@ -157,6 +191,10 @@ class State(rx.State):
 
         code, text = separate_code_and_text(ret)
 
+        self.code = code
+
         self.chat_history.append((text, code))
+
+        print("Digitization completed.")
 
 
